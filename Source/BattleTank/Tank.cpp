@@ -1,34 +1,46 @@
 // Copyright Wesley Earl Stander 2020
 
-
+#include "TankAimingComponent.h"
+#include "Components/InputComponent.h"
 #include "Tank.h"
 
 // Sets default values
 ATank::ATank()
 {
- 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	TankAimingComponent = CreateDefaultSubobject<UTankAimingComponent>(FName(TEXT("Aiming Component")));
+}
 
+void ATank::Fire()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Fire"));
+}
+
+void ATank::AimAt(FVector HitLocation)
+{
+	TankAimingComponent->AimAt(HitLocation, LaunchSpeed);
 }
 
 // Called when the game starts or when spawned
 void ATank::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
-// Called every frame
-void ATank::Tick(float DeltaTime)
+void ATank::SetBarrel(UTankBarrel* Barrel)
 {
-	Super::Tick(DeltaTime);
-
+	TankAimingComponent->SetBarrel(Barrel);
 }
+
+void ATank::SetTurret(UTankTurret* Turret)
+{
+	TankAimingComponent->SetTurret(Turret);
+}
+
 
 // Called to bind functionality to input
 void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ATank::Fire);
 }
 
