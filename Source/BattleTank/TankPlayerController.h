@@ -8,6 +8,7 @@
 
 class ATank;
 
+//Tank player controller
 UCLASS()
 class BATTLETANK_API ATankPlayerController : public APlayerController
 {
@@ -15,21 +16,24 @@ class BATTLETANK_API ATankPlayerController : public APlayerController
 	
 
 public:
-	ATank* GetControlledTank() const;
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
+
+protected:
+	UFUNCTION(BlueprintCallable, Category = Setup)
+	ATank* GetControlledTank() const;
 
 private:
 	void AimTowardsCrosshair();
 	bool GetSightRayHitLocation(FVector& HitLocation) const;
 	bool GetLookDirection(FVector2D& Location, FVector& Direction) const;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	float CrossHairXPercentage = .5f;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	float CrossHairYPercentage = .33333f;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	float TargetRange = 100000.f;
 };

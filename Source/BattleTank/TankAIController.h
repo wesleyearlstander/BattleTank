@@ -8,6 +8,7 @@
 
 class ATank;
 
+//Tank AI Controller
 UCLASS()
 class BATTLETANK_API ATankAIController : public AAIController
 {
@@ -16,6 +17,10 @@ class BATTLETANK_API ATankAIController : public AAIController
 private:
 	void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
+
+	//Radius around player that tank will accept final movement
+	UPROPERTY(EditDefaultsOnly)
+	float AcceptanceRadius = 3000.f;
 
 	ATank* GetControlledTank() const;
 

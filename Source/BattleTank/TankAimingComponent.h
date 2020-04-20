@@ -10,7 +10,7 @@ class UStaticMeshComponent;
 class UTankBarrel;
 class UTankTurret;
 
-//Hold's barrel properties and elevate method
+//Hold's barrel properties and elevate method, and aims barrel and turret
 UCLASS( ClassGroup=(Tank), meta=(BlueprintSpawnableComponent))
 class BATTLETANK_API UTankAimingComponent : public UActorComponent
 {
@@ -33,9 +33,11 @@ public:
 
 	void AimAt(FVector HitLocation, float LaunchSpeed);
 
+	UTankBarrel* Barrel = nullptr;
+
 private:
 
-	UTankBarrel* Barrel = nullptr;
+	
 	UTankTurret* Turret = nullptr;
 
 	void MoveBarrel(FVector AimDirection);

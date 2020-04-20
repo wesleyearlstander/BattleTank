@@ -7,7 +7,7 @@
 #include "TankTurret.generated.h"
 
 /**
- * 
+ * Turret properties and mesh
  */
 UCLASS(ClassGroup = (Tank), meta = (BlueprintSpawnableComponent))
 class BATTLETANK_API UTankTurret : public UStaticMeshComponent
@@ -17,6 +17,6 @@ class BATTLETANK_API UTankTurret : public UStaticMeshComponent
 public:
 	void Rotate(float RelativeSpeed);
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly, Category = Setup)
 	float MaxDegreesPerSecond = 20.f;
 };

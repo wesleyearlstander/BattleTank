@@ -1,18 +1,38 @@
 // Copyright Wesley Earl Stander 2020
 
 #include "TankAimingComponent.h"
+#include "TankBarrel.h"
+#include "Projectile.h"
+#include "TimerManager.h"
+#include "TankMovementComponent.h"
 #include "Components/InputComponent.h"
+#include "UnrealEngine.h"
 #include "Tank.h"
 
 // Sets default values
 ATank::ATank()
 {
 	TankAimingComponent = CreateDefaultSubobject<UTankAimingComponent>(FName(TEXT("Aiming Component")));
+	//TankMovementComponent = CreateDefaultSubobject<UTankMovementComponent>(FName(TEXT("Movement Component")));
 }
 
 void ATank::Fire()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Fire"));
+	if (!TankAimingComponent->Barrel ||
+		!CanFire) 
+	{ return; }
+	
+	FActorSpawnParameters p;
+
+	AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(
+		ProjectileBlueprint,
+		TankAimingComponent->Barrel->GetSocketLocation(FName("LaunchSocket")),
+		TankAimingComponent->Barrel->GetSocketRotation(FName("LaunchSocket"))
+		);
+
+	Projectile->LaunchProjectile(LaunchSpeed);
+	CanFire = false;
+	GetWorldTimerManager().SetTimer(ReloadTimer, this, &ATank::Reload, ReloadTime);
 }
 
 void ATank::AimAt(FVector HitLocation)
@@ -44,3 +64,7 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ATank::Fire);
 }
 
+void ATank::Reload()
+{
+	CanFire = true;
+}
