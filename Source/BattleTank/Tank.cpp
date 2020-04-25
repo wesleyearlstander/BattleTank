@@ -4,7 +4,6 @@
 #include "TankBarrel.h"
 #include "Projectile.h"
 #include "TimerManager.h"
-#include "TankMovementComponent.h"
 #include "Components/InputComponent.h"
 #include "UnrealEngine.h"
 #include "Tank.h"
@@ -12,13 +11,15 @@
 // Sets default values
 ATank::ATank()
 {
-	TankAimingComponent = CreateDefaultSubobject<UTankAimingComponent>(FName(TEXT("Aiming Component")));
+	//TankAimingComponent = CreateDefaultSubobject<UTankAimingComponent>(FName(TEXT("Aiming Component")));
 	//TankMovementComponent = CreateDefaultSubobject<UTankMovementComponent>(FName(TEXT("Movement Component")));
+	PrimaryActorTick.bCanEverTick = false;
 }
 
 void ATank::Fire()
 {
-	if (!TankAimingComponent->Barrel ||
+	if (!ensure(TankAimingComponent)) { return; }
+	if (ensure(!TankAimingComponent->Barrel) ||
 		!CanFire) 
 	{ return; }
 	
@@ -37,31 +38,21 @@ void ATank::Fire()
 
 void ATank::AimAt(FVector HitLocation)
 {
+	if (!ensure(TankAimingComponent)) { return; }
 	TankAimingComponent->AimAt(HitLocation, LaunchSpeed);
 }
-
-// Called when the game starts or when spawned
-void ATank::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
-void ATank::SetBarrel(UTankBarrel* Barrel)
-{
-	TankAimingComponent->SetBarrel(Barrel);
-}
-
-void ATank::SetTurret(UTankTurret* Turret)
-{
-	TankAimingComponent->SetTurret(Turret);
-}
-
 
 // Called to bind functionality to input
 void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ATank::Fire);
+}
+
+void ATank::BeginPlay()
+{
+	Super::BeginPlay();
+	TankAimingComponent = FindComponentByClass<UTankAimingComponent>();
 }
 
 void ATank::Reload()

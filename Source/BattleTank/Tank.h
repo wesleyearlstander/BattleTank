@@ -7,7 +7,6 @@
 #include "Tank.generated.h"
 
 class UTankAimingComponent;
-class UTankMovementComponent;
 class AProjectile;
 
 //Tank class
@@ -25,27 +24,17 @@ public:
 	void Fire();
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 
 	UPROPERTY(BlueprintReadOnly)
 	UTankAimingComponent* TankAimingComponent = nullptr;
-
-	UPROPERTY(BlueprintReadOnly)
-	UTankMovementComponent* TankMovementComponent = nullptr;
-
-
-	UFUNCTION(BlueprintCallable, Category = AimingComponent)
-	void SetBarrel(UTankBarrel* Barrel);
-
-	UFUNCTION(BlueprintCallable, Category = AimingComponent)
-	void SetTurret(UTankTurret* Turret);
 
 public:	
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
+	void BeginPlay() override;
+
 	UPROPERTY(EditDefaultsOnly, Category = Setup)
 	float LaunchSpeed = 100000.f;
 
