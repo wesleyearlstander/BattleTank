@@ -6,8 +6,6 @@
 #include "AIController.h"
 #include "TankAIController.generated.h"
 
-class ATank;
-
 //Tank AI Controller
 UCLASS()
 class BATTLETANK_API ATankAIController : public AAIController
@@ -21,8 +19,4 @@ private:
 	//Radius around player that tank will accept final movement
 	UPROPERTY(EditDefaultsOnly)
 	float AcceptanceRadius = 3000.f;
-
-	ATank* GetControlledTank() const;
-
-	ATank* GetPlayerTank() const;
 };

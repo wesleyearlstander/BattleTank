@@ -1,8 +1,8 @@
 // Copyright Wesley Earl Stander 2020
 
 #include "UnrealEngine.h"
-#include "TankPlayerController.h"
-#include "Tank.h"
+#include "TankAimingComponent.h"
+#include "UnrealEngine.h"
 #include "TankAIController.h"
 
 void ATankAIController::BeginPlay()
@@ -13,25 +13,17 @@ void ATankAIController::BeginPlay()
 void ATankAIController::Tick(float DeltaTime) 
 {
 	Super::Tick(DeltaTime);
-	if (ensure(GetPlayerTank())) {
 
-		MoveToActor(GetPlayerTank(), AcceptanceRadius);
+	APawn* PlayerTank = GetWorld()->GetFirstPlayerController()->GetPawn();
+	APawn* ControlledTank = GetPawn();
 
-		GetControlledTank()->AimAt(GetPlayerTank()->GetActorLocation());
+	if (!ensure(PlayerTank && ControlledTank)) { return; }
 
-		GetControlledTank()->Fire();
-	}
-}
+	MoveToActor(PlayerTank, AcceptanceRadius);
 
-ATank* ATankAIController::GetControlledTank() const
-{
-	return Cast<ATank>(GetPawn());
-}
+	UTankAimingComponent* AimingComponent = ControlledTank->FindComponentByClass<UTankAimingComponent>();
 
-ATank* ATankAIController::GetPlayerTank() const
-{
-	APawn* player = GetWorld()->GetFirstPlayerController()->GetPawn();
-	if (player)
-		return Cast<ATank>(player);
-	else return nullptr;
+	AimingComponent->AimAt(PlayerTank->GetActorLocation());
+
+	AimingComponent->Fire();
 }

@@ -2,8 +2,11 @@
 
 #include "Kismet/GameplayStatics.h"
 #include "Components/StaticMeshComponent.h"
+#include "TimerManager.h"
+#include "UnrealEngine.h"
 #include "TankBarrel.h"
 #include "TankTurret.h"
+#include "Projectile.h"
 #include "TankAimingComponent.h"
 
 // Sets default values for this component's properties
@@ -28,7 +31,28 @@ void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 	// ...
 }
 
-void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
+void UTankAimingComponent::Fire()
+{
+	if (!ensure(Barrel && ProjectileBlueprint) ||
+		!CanFire)
+	{
+		return;
+	}
+
+	FActorSpawnParameters p;
+
+	AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(
+		ProjectileBlueprint,
+		Barrel->GetSocketLocation(FName("LaunchSocket")),
+		Barrel->GetSocketRotation(FName("LaunchSocket"))
+		);
+
+	Projectile->LaunchProjectile(LaunchSpeed);
+	CanFire = false;
+	GetWorld()->GetTimerManager().SetTimer(ReloadTimer, this, &UTankAimingComponent::Reload, ReloadTime);
+}
+
+void UTankAimingComponent::AimAt(FVector HitLocation)
 {
 	if (!ensure(Barrel)) { return; }
 	if (!ensure(Turret)) { return; }
@@ -51,6 +75,12 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 		MoveBarrel(AimDirection);
 	}
 }
+
+void UTankAimingComponent::Reload()
+{
+	CanFire = true;
+}
+
 
 void UTankAimingComponent::MoveBarrel(FVector AimDirection)
 {

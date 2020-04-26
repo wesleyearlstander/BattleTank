@@ -2,7 +2,6 @@
 
 #include "BattleTank.h"
 #include "UnrealEngine.h"
-#include "Tank.h"
 #include "TankAimingComponent.h"
 #include "TankPlayerController.h"
 
@@ -10,7 +9,7 @@
 void ATankPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	UTankAimingComponent* aiming = GetControlledTank()->FindComponentByClass<UTankAimingComponent>();
+	UTankAimingComponent* aiming = GetPawn()->FindComponentByClass<UTankAimingComponent>();
 	if (aiming) {
 		FoundAimingComponent(aiming);
 	}
@@ -27,11 +26,12 @@ void ATankPlayerController::Tick(float DeltaSeconds)
 
 void ATankPlayerController::AimTowardsCrosshair()
 {
-	if (!ensure(GetControlledTank())) { return; }
+	UTankAimingComponent* aiming = GetPawn()->FindComponentByClass<UTankAimingComponent>();
+	if (!ensure(aiming)) { return; }
 	
 	FVector HitLocation;
 	if (GetSightRayHitLocation(HitLocation)) {
-		GetControlledTank()->AimAt(HitLocation);
+		aiming->AimAt(HitLocation);
 	}
 }
 
@@ -64,9 +64,4 @@ bool ATankPlayerController::GetLookDirection(FVector2D& ScreenLocation, FVector&
 {
 	FVector Location;
 	return DeprojectScreenPositionToWorld(ScreenLocation.X, ScreenLocation.Y, Location, Direction);
-}
-
-ATank* ATankPlayerController::GetControlledTank() const
-{
-	return Cast<ATank>(GetPawn());
 }
