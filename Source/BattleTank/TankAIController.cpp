@@ -2,7 +2,8 @@
 
 #include "UnrealEngine.h"
 #include "TankAimingComponent.h"
-#include "UnrealEngine.h"
+#include "Engine/Engine.h"
+#include "GameFramework/PlayerController.h"
 #include "TankAIController.h"
 
 void ATankAIController::BeginPlay()
@@ -25,5 +26,6 @@ void ATankAIController::Tick(float DeltaTime)
 
 	AimingComponent->AimAt(PlayerTank->GetActorLocation());
 
-	AimingComponent->Fire();
+	if (AimingComponent->GetFiringState() == EFiringState::Locked)
+		AimingComponent->Fire();
 }

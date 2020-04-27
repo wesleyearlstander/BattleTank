@@ -34,12 +34,17 @@ public:
 
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = state)
-	EFiringState FiringState = EFiringState::Locked;
+	EFiringState FiringState = EFiringState::Reloading;
 
-public:	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Setup)
+	TSubclassOf<AProjectile> ProjectileBlueprint;
+
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	virtual void BeginPlay() override;
+
+public:	
 	void AimAt(FVector HitLocation);
 
 	UFUNCTION(BlueprintCallable)
@@ -47,21 +52,23 @@ public:
 
 	UTankBarrel* Barrel = nullptr;
 
+	UFUNCTION(BlueprintCallable)
+	EFiringState GetFiringState() const;
+
 private:
+
 	UPROPERTY(EditDefaultsOnly, Category = Setup)
 	float LaunchSpeed = 10000.f;
 
 	UPROPERTY(EditDefaultsOnly, Category = Setup)
-	TSubclassOf<AProjectile> ProjectileBlueprint;
-
-	UPROPERTY(EditDefaultsOnly, Category = Setup)
-	float ReloadTime = 1.f;
+	float ReloadTime = 3.f;
 
 	FTimerHandle ReloadTimer;
 	void Reload();
-	bool CanFire = true;
 	
 	UTankTurret* Turret = nullptr;
+	FVector AimDirection;
+	bool IsBarrelMoving();
 
-	void MoveBarrel(FVector AimDirection);
+	void MoveBarrel();
 };

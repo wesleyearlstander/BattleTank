@@ -16,7 +16,8 @@ private:
 	void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
+protected:
 	//Radius around player that tank will accept final movement
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = Setup)
 	float AcceptanceRadius = 3000.f;
 };
